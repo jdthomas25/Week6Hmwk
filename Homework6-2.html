@@ -1,0 +1,84 @@
+<!DOCTYPE>
+<html>
+
+<head>
+    <title>Artists</title>
+    <style type="text/css">
+        button, div, form, input {
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Artist Search</h1>
+
+    <div id="buttonsView"> 
+    </div>  
+
+    <form id="artist-form">
+        <label for="artist-input">Search for a Artist</label>
+            <input type="text" id="artists-input"><br>
+   
+            <input id="addArtist" type="submit" value="Search for a Artist">
+            </form>
+  
+        <div id="artistsView">
+
+        </div>
+
+    <button data-artists="Chris + Brown">Chris Brown</button>
+    <button data-artists="Mariah + Carey">Mariah Carey</button>
+    <button data-artists="R. + Kelly">R Kelly</button>
+    <div id="gifsAppearHere">
+    </div>
+
+    <div class="container">
+        <div id="buttonsView">
+            </div>
+
+    <script src='http://code.jquery.com/jquery-2.1.3.min.js'></script>
+    <script type="text/javascript">
+    var artists = ['Chris Brown', 'Mariah Carey', 'R Kelly', 'Shaggy', 'Method Man'];
+    function renderButtons(){
+        $('#buttonsView').empty();
+        for (var i = 0; i < artists.length; i++){ var a = $('<button>')
+            a.addClass('artist');
+            a.attr('data-name', artists[i]);
+            a.text(artists[i]);
+            $('#buttonsView').append(a);}
+        }
+        $('button').on('click', function() {
+        var artists = $(this).data('artists');
+        var queryURL = "http://api.giphy.com/v1/gifs/search?q=" + artists + "&api_key=dc6zaTOxFJmzC&limit=10";
+        $.ajax({
+                url: queryURL,
+                method: 'GET'
+            })
+            .done(function(response) {
+                console.log(response)
+                var results = response.data;
+                for (var i = 0; i < results.length; i++) {
+                    var artistsDiv = $('<div>');
+                    var p = $('<p>').text("Rating: " + results[i].rating);
+                    var artistsImage = $('<img>');
+                    artistsImage.attr('src', results[i].images.fixed_height.url);
+                    artistsDiv.append(p);
+                    artistsDiv.append(artistsImage);
+                    $('#gifsAppearHere').prepend(artistsDiv);
+                    }
+            });
+    });    
+
+    renderButtons();
+            $('#addArtist').on('click', function(){
+        var artist = $('#artists-input').val().trim();
+        artists.push(artist);
+        
+        renderButtons();
+        return false;
+    });
+    </script>
+</body>
+
+</html>
